@@ -10,7 +10,7 @@ class ImageDataset(Dataset):
         self.data_dir = data_dir
         self.transforms = transforms
         self.categories = os.listdir(data_dir)
-        self.labels = convert_category_to_label(self.categories)
+        self.labels = convert_category_to_label(self.categories)[0]
         self.path_with_label = []
         for i in range(len(self.categories)):
             sub_dir_path = os.path.join(self.data_dir, self.categories[i])
@@ -24,7 +24,7 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, index):
         image = Image.open(self.path_with_label[index][0])
-        if self.transform:
-            image = self.transform(image)
+        if self.transforms:
+            image = self.transforms(image)
         label = torch.tensor(self.path_with_label[index][1])
         return image, label
