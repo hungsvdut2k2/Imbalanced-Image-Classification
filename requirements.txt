@@ -1,0 +1,4 @@
+pytorch_lightning==2.0.4
+timm==0.9.2
+scikit-learn==1.2.2
+bentoml==1.0.22
