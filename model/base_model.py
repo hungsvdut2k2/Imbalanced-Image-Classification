@@ -3,6 +3,7 @@ import pytorch_lightning as pl
 import torch
 from torchmetrics import F1Score, Recall, Precision, Accuracy
 from .focal_loss import FocalLoss
+from torchvision.ops import sigmoid_focal_loss
 
 
 class BaseModel(pl.LightningModule):
@@ -37,8 +38,9 @@ class BaseModel(pl.LightningModule):
     def training_step(self, batch):
         x, y = batch
         logits = self.forward(x)
-        loss = self.criterion(logits, y)
-        accuracy = self.accuracy(logits, y)
+        predicts = torch.max(logits, dim=1, keepdim=False)
+        loss = self.criterion(predicts, y)
+        accuracy = self.accuracy(predicts, y)
 
         self.log("train_loss", loss, on_epoch=True)
         self.log("train_accuracy", accuracy, on_epoch=True)
@@ -48,11 +50,12 @@ class BaseModel(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
         logits = self.forward(x)
-        loss = self.criterion(logits, y)
-        precision = self.precision(logits, y)
-        recall = self.recall(logits, y)
-        f1_score = self.f1_score(logits, y)
-        accuracy = self.accuracy(logits, y)
+        predicts = torch.max(logits, dim=1, keepdim=False)
+        loss = self.criterion(predicts, y)
+        precision = self.precision(predicts, y)
+        recall = self.recall(predicts, y)
+        f1_score = self.f1_score(predicts, y)
+        accuracy = self.accuracy(predicts, y)
 
         self.log("train_loss", loss, on_epoch=True)
         self.log("train_accuracy", accuracy, on_epoch=True)
