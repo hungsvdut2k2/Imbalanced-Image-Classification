@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 covid19_classification_dataset
 test.ipynb
+lightning_logs
